@@ -1,0 +1,5 @@
+$fourwallpapers-black-primary: mat-palette($mat-grey, 900, 500, 900);
+$fourwallpapers-black-accent: mat-palette($mat-green, A200);
+$fourwallpapers-black-warn: mat-palette($mat-red, A200);
+
+$fourwallpapers-black-theme: mat-dark-theme( $fourwallpapers-black-primary, $fourwallpapers-black-accent, $fourwallpapers-black-warn );

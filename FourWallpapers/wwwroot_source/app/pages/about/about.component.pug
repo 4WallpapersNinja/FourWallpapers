@@ -1,0 +1,109 @@
+.container
+	.row.align-items-end
+		.col-md-12
+			md-card
+				md-card-title
+					h2 About
+				md-card-content
+					md-list
+						md-list-item
+							a.md-button(href='/about#Whatis') What is this site?
+						md-list-item
+							a.md-button(href='/about#How') How does this work?
+						md-list-item
+							a.md-button(href='/about#Who') Who runs 4wp.ninja?
+						md-list-item
+							a.md-button(href='/about#Contact') Where do I report problems? or I have this great idea, who do I tell?
+						md-list-item
+							a.md-button(href='/about#Tagging') How do I tag images?
+						md-list-item
+							a.md-button(href="/about#Features") How can I see upcoming features or Suggestions?
+						md-list-item
+							a.md-button(href="/about#OCrap") O Crap something happened to the site
+						md-list-item
+							a.md-button(href="/about#Code")  Will the sites source code ever be open sourced? So others can help enhance it?
+						md-list-item
+							a.md-button(href='/about#WhatHappened') What happened to 4scaped? 4walled?
+						md-list-item
+							a.md-button(href='/technical') What is the site written in?
+		.col-md-12
+			md-card#Whatis
+				md-card-title
+					h2 What is this site?
+				md-card-content
+					| If you're aware of the 4chan imageboards, 7chan imageboards, reddit, then you would be aware they have wallpaper boards.
+					br
+					| The problem with these boards is they are frequently clogged with people posting the same wallpapers over and over again,
+					br
+					| so this site downloads all the wallpapers posted on 4chan's /w/, /hr/, and /wg/ boards; 7chan's /wp/ board; reddits /wallpaper , /wallpapers/, /nsfw_wallpapers/ boards.
+					br
+					| It then stores the image in a database ready for you to search.
+					br
+					| Some images have no searchable features (for example, the filename is "1251193196442.jpg") and so these images need tagging.
+		.col-md-12
+			md-card#How
+				md-card-title
+					h2 How does it work?
+				md-card-content
+					| 4wp.ninja uses a script to look for images posted on the boards listed above. When it finds new images, it adds them to a searchable database.
+		.col-md-12
+			md-card#Who
+				md-card-title
+					h2 Who runs it?
+				md-card-content
+					| The site is currently run and moderated by 1 individual his name is Paul. &nbsp;
+					a(href='mailto:support@4wp.ninja?subject=I%20can%20not%20view%204wpNinja') support@4wp.ninja
+		.col-md-12
+			md-card#Contact 
+				md-card-title
+					h2 Where do I report problems? or I have this great idea, who do I tell?
+				md-card-content If there are any issues with the size email us at &nbsp;
+					a(href='mailto:support@4wp.ninja?subject=I%20can%20not%20view%204wpNinja') support@4wp.ninja
+					
+		.col-md-12
+			md-card#Tagging 
+				md-card-title
+					h2 How do I tag images?
+				md-card-content 
+					| Whenever you search for images, it shows the results in a thumbnailed form.
+					br
+					| When you click on the thumbnail, an image detail page is loaded with a field where you can edit tags.
+					br
+					| There is also a report button to report images which either aren't wallpapers, are just plain stupid, or are illegal in most jurisdictions for wallpapers (e.g. gore, cp, bestiality).
+		.col-md-12
+			md-card#Features
+				md-card-title
+					h2 How can I see upcoming features or Suggestions?
+				md-card-content
+					| We will be adding suggestions and upcoming features to our &nbsp;
+					a(href="https://trello.com/b/Ait7dia8",target="_blank") Trillo board 
+					| &nbsp;. Please note all features and suggestions won't always make it to the board. Also even if they do it by no means they will go into the actual site. Its based over community , resources, and time. (The last two are finite things we dont have all the time)
+		.col-md-12
+			md-card#OCrap
+				md-card-title
+					h2 O Crap something happened to the site
+				md-card-content
+					| When something effects the site or the servers behind them. We will update the community through our twitter page. &nbsp;
+					a(href="https://twitter.com/4wpNinja",target="_blank") Click here for Twitter page
+		.col-md-12
+			md-card#Code
+				md-card-title
+					h2  Will the sites source code ever be open sourced? So others can help enhance it?
+				md-card-content
+					| At this time we will not be open sourcing the code behind the site. Once the site is established and we can set some guidelines for it maybe. Nothing is impossible
+		.col-md-12
+			md-card#WhatHappened
+				md-card-title
+					h2 What happened to 4scrape and 4walled?
+				md-card-content 
+					| for 4scrape see  &nbsp;
+					a(href="http://blog.desudesudesu.org/?p=1525") http://blog.desudesudesu.org/?p=1525
+					| &nbsp; for the core of the matter.
+					br 
+					| for 4walled see &nbsp;
+					a(href="https://t.co/MBVZm6FrA0") https://t.co/MBVZm6FrA0
+					br 
+					br
+					| The staff of 4wallpapers ninja would like to thank the staff from both of the previous sites for all their effort and time. We built this site around the old python scraper used by 4walled (
+					a(href='https://github.com/4walled') https://github.com/4walled
+					| ) and the archives available of the original sites.

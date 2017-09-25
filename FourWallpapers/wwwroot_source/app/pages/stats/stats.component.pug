@@ -1,0 +1,18 @@
+.container-fluid
+	.row.align-items-start
+		.col-md-12
+			h2 Statistics as of {{ stats.asOf | date:'yyyy-MM-dd HH:mm'}}
+		.col-md-12
+			md-grid-list(cols="{{columns}}",rowHeight="100px",gutterSize='25px')
+				md-grid-tile(*ngFor="let stat of stats.topStats")
+					md-grid-tile-header {{stat.keyword}}
+					md-grid-tile-footer.pull-right {{stat.count}}
+		.col-md-12
+			br
+			h2 Top Keywords
+		.col-md-12
+			md-grid-list(cols="{{columns}}",rowHeight="100px",gutterSize='25px')
+				md-grid-tile(*ngFor="let stat of stats.topKeywords")
+					md-grid-tile-header
+						a.pointer((click)='searchKeyword(stat.keyword)') {{stat.keyword}}
+					md-grid-tile-footer.pull-right {{stat.count}}

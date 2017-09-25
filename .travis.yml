@@ -1,0 +1,38 @@
+language: csharp
+solution: .\FourWallpapers.sln
+
+dist: trusty
+sudo: required
+mono: none
+dotnet: 2.0.0
+node_js: 
+  - "8.5"
+ 
+addons:
+  chrome: stable
+  artifacts:
+    paths:
+      - dist/build_output.tar.gz
+
+before_install:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+      
+cache:
+  directories:
+  - FourWallpapers/node_modules
+  - packages
+  
+script:
+  - dotnet restore  --packages ./packages
+  - pushd FourWallpapers && npm install && npm run-script ci && popd
+  - dotnet publish FourWallpapers -c Release
+  - dotnet publish FourWallpapers.Scrapper.CLI -c Release
+  - mkdir dist
+  - mv FourWallpapers.Scrapper.CLI/bin/Release/netcoreapp2.0/publish/ dist/Scraper.CLI
+  - mv FourWallpapers/bin/Release/netcoreapp2.0/publish/ dist/SiteDeploy
+  - rm -rf dist/SiteDeploy/wwwroot_source
+  - mv FourWallpapers/wwwroot dist/SiteDeploy/wwwroot/
+  - pushd dist && tar -czvf build_output.tar.gz Scraper.CLI SiteDeploy
+  

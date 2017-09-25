@@ -1,0 +1,31 @@
+@import 'styles-variables';
+
+.container-fluid {
+    margin-top: 20px;
+}
+
+form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.full-width, .full-width-select {
+    width: 100%;
+}
+.full-width-padding {
+    padding-bottom: 15px;
+}
+.main-heading {
+    text-transform: uppercase;
+    margin: 0 0 20px 0
+}
+
+md-card {
+    margin: 0 0 20px 0;
+
+    md-card-title {
+        position: relative;
+    }
+
+}

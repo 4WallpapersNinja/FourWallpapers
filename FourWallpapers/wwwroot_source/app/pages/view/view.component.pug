@@ -1,0 +1,60 @@
+form
+.container-fluid
+	.row.align-items-start
+		.col-lg-3.col-md-12
+			md-card
+				md-card-header
+					md-card-title 
+						h2 Image Information
+				md-card-content
+					p Resolution: {{image.resolution}}
+					p Source: {{image.indexSource}}
+					p User: {{image.who}}
+					p Downloads: {{image.downloads}}
+					p Date Added: {{image.dateDownloaded | date:'yyyy-MM-dd HH:mm'}}
+					p Classification: {{image.classification}}
+					p Keywords: {{image.tags}}
+		.col-lg-6.col-md-12
+			md-card
+				a(href="{{imageUrl()}}")
+					img(md-card-image='',src="{{imageUrl()}}", alt='{{image.imageId}}')
+				md-card-content(align="center")
+					p Please don't direct-link to images! To share use this URL:
+					p
+						a(href="https://4wp.ninja/view/{{image.imageId}}") https://4wp.ninja/view/{{image.imageId}}
+			md-card
+				form.search-form
+					md-card-actions(align="center")
+						md-form-field.full-width
+							input(placeholder="Keywords",mdInput='',[(ngModel)]="keywords", name="keywords")
+							md-hint Tags separator is , (comma). So:
+								br
+								| Good tags: "code geass, kallen, cc"
+								br
+								| Wrong tags: "code geass kallen cc" 
+						button.md-button.md-block.md-primary.md-raised(md-raised-button='',color="primary", (click)='updateKeywords()') Update Keywords
+					md-card-actions(align="center")
+						md-form-field.full-width-select 
+							input.full-width(type='text', mdInput='', [ngStyle]="{'display':'none'}")
+							md-select.full-width(placeholder="Classification",[(ngModel)]="classification", name="class")
+								md-option(value="1") Safe for Work
+								md-option(value="2") Borderline
+								md-option(value="3") Not Safe for Work
+							md-hint Safe for work?
+						button.md-button.md-primary.md-raised(md-raised-button='',color="primary", (click)='updateClass()') Update Rating
+					md-card-actions(align="center")
+						span.full-width  Desktop (screenshot) ? Not a wallpaper?
+						button.md-button.md-warn.md-raised(md-raised-button='',color="primary", *ngIf='image.reported != 3',(click)='report()') Report
+					md-card-actions(align="center")
+						button.md-raised(md-raised-button='',color="primary", (click)='back()') Close Image
+		.col-lg-3.col-md-12
+			md-card
+				md-card-header
+					md-card-title
+						h2 Tagging 101
+				md-card-content
+					p If it's a desktop, report it. Don't bother tagging it, I'll know if it's a desktop.
+					p If it's a screenshot of something like a browser or not wallpaper related, click report.
+					p If you don't know what it is, don't tag it.
+					p If you know what it is, tag it with words that you would use to find that image. Seperate multiple tags with a comma (e.g. rain, beach).
+		

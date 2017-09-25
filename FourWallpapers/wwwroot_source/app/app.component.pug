@@ -1,0 +1,21 @@
+md-sidenav-container
+	md-sidenav(#sidenav='', mode='push')
+		.branding
+			img([src]='logo')
+		md-nav-list
+			a(md-list-item='', *ngFor='let item of navigationSideMenu', (click)='sidenav.close()', [routerLink]='[item.link]', routerLinkactive='active')
+				| {{item.label}}
+	md-toolbar(color='primary')
+		button.hidden-md-up(md-icon-button='', (click)='sidenav.open()')
+			md-icon menu
+		span.branding.spacer.hidden-md-up.text-center(routerLink='')
+			img([src]='logo')
+			|  4Wallpapers Ninja
+		span.branding.spacer.hidden-sm-down(routerLink='')
+			img([src]='logo')
+			|  4Wallpapers Ninja
+		span.hidden-sm-down
+			button.nav-button(md-button='', *ngFor='let item of navigation', [routerLink]='[item.link]', routerLinkactive='active')
+				| {{item.label}}
+	main.content
+		router-outlet(#o='outlet')

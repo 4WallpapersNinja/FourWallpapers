@@ -1,0 +1,34 @@
+@import 'styles-variables';
+
+@import '~bootstrap/scss/bootstrap-reboot';
+@import '~bootstrap/scss/bootstrap-grid';
+@import '~bootstrap/scss/utilities';
+
+@import 'styles-reset';
+
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+@import 'default-theme.scss';
+@import 'light-theme.scss';
+
+@import 'styles-reset.scss-theme';
+@import 'app/app.component.scss-theme';
+@import 'app/pages/about/about.component.scss-theme';
+
+@mixin custom-components-theme($theme) {
+  @include fourwallpapers-styles-reset-theme($theme);
+  @include fourwallpapers-app-component-theme($theme);
+  @include fourwallpapers-about-component-theme($theme);
+}
+
+.default-theme {
+  @include angular-material-theme($fourwallpapers-black-theme);
+  @include custom-components-theme($fourwallpapers-black-theme);
+}
+
+.light-theme {
+  @include angular-material-theme($fourwallpapers-light-theme);
+  @include custom-components-theme($fourwallpapers-light-theme);
+}

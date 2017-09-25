@@ -1,0 +1,37 @@
+.container-fluid
+	.row
+		.col-md-6.offset-md-3
+			div(align="center")
+				h2 Search Filters
+				form.search-form
+					md-form-field.full-width.full-width-padding
+						input(placeholder="Keywords", mdInput='',[(ngModel)]="search.Criteria",name="Criteria")
+						md-hint(align="start") Multiple keywords can be seperated by commas (example: star wars,funny,han solo )
+					md-form-field.full-width
+						input(placeholder="Size (in kilobytes)", mdInput='',[(ngModel)]="search.Size",name="Size")
+						md-select.full-width( [ngStyle]="{'display':'none'}")
+						md-hint(align="start") This is the minimium size you would like in kilobytes
+					md-form-field.full-width-select 
+						input.full-width(type='text', mdInput='', [ngStyle]="{'display':'none'}")
+						md-select.full-width(placeholder='Board', [(ngModel)]="search.Source" ,name="Source")
+							md-option(*ngFor="let source of sources", value="{{source.value}}") {{source.label}}
+						md-hint(align="start") What the picture was indexed from
+					md-form-field.full-width-select 
+						input.full-width(type='text', mdInput='', [ngStyle]="{'display':'none'}")
+						md-select.full-width(placeholder='Resolution', [(ngModel)]="search.Resolution",name="Resolution",(ngModelChange)="ratio(search.Resolution)")
+							md-option(*ngFor="let reso of resolutions", value="{{reso.value}}") {{reso.label}}
+						md-hint(align="start") Sorted by width, larger screens are closer to the bottom of the list
+					md-form-field.full-width-select 
+						input.full-width(type='text', mdInput='', [ngStyle]="{'display':'none'}")
+						md-select.full-width(placeholder='Resolution Search Style', [(ngModel)]="search.ResolutionSearch",name="ResolutionSearch")
+							md-option(value="0") Exact
+							md-option(value="1") Greater Than or Equal to {{search.Resolution}}
+							md-option(value="2") Same Aspect Ratio ({{search.Ratio}})
+						md-hint(align="start") How to search for resolutions of pictures.
+					md-form-field.full-width-select 
+						input.full-width(type='text', mdInput='', [ngStyle]="{'display':'none'}")
+						md-select.full-width(placeholder='Classification', [(ngModel)]="search.Class",name="Class")
+							md-option(*ngFor="let classification of classifications", value="{{classification.value}}") {{classification.label}}
+						md-hint(align="start") Is this safe to view at work?
+					button(md-raised-button='',color="primary", (click)="processQuerySearch()") Search
+					button(md-raised-button='',color="primary", (click)="processQueryRandom()") Random

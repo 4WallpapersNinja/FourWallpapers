@@ -1,0 +1,21 @@
+.container-fluid
+	.row
+		.col-md-12
+			div
+				button(md-button, [routerLink]="['/top']",routerLinkactive='active') By Downloads
+				button(md-button, [mdMenuTriggerFor]="source") By Source
+				button(md-button, [mdMenuTriggerFor]="classification") By Classification
+				md-menu(#source="mdMenu")
+					button(md-menu-item, *ngFor="let source of sourceOptions", [routerLink]="[source.link]", routerLinkactive='active') {{source.label}}
+				md-menu(#classification="mdMenu")
+					button(md-menu-item, *ngFor="let classification of classificationOptions", [routerLink]="[classification.link]", routerLinkactive='active') {{classification.label}}
+	.row
+		.col-md-12
+			md-card(flex='25', *ngIf="loadingCard")
+				md-card-title 
+					h2 Ninjas are looking for your requested wallpapers
+					img.md-card-image(ng-src="/assets/loadingStar.svg")
+		.col-md-12
+			md-grid-list(cols="{{columns}}",rowHeight="250px",gutterSize='10px')
+				md-grid-tile(*ngFor='let image of images')
+					img.img-fluid.pointer([defaultImage]="'/assets/logo.svg'",[lazyLoad]="imageUrl(image)",[offset]="25", (click)='openImage(image.imageId)')
