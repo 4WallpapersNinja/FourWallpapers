@@ -65,7 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
             .subscribe(
                 theme => {
                     this.componentCssClass = theme;
-                    this.overlayContainer.themeClass = theme;
+                    this.overlayContainer['themeClass'] = theme;
                 });
     }
 
