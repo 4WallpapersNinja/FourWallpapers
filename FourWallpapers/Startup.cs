@@ -1,14 +1,23 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using FourWallpapers.Core;
+using FourWallpapers.Models;
 using FourWallpapers.Models.Repositories;
+using Identity.Dapper;
+using Identity.Dapper.Entities;
+using Identity.Dapper.SqlServer;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FourWallpapers {
     public class Startup {
@@ -51,22 +60,32 @@ namespace FourWallpapers {
                 .AddSingleton<IKeywordRepository,
                     Repositories.SqlServer.KeywordRepository>();
 
+            services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
+                .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
-            services.ConfigureApplicationCookie(options => options.Events = new CookieAuthenticationEvents {
-                OnRedirectToLogin = context => {
-                    if (context.Request.Path.StartsWithSegments("/api") &&
-                        context.Response.StatusCode == (int) HttpStatusCode.OK)
-                        context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            services.AddIdentity<DapperIdentityUser, DapperIdentityRole>()
+                .AddDapperIdentityForSqlServer()
+                .AddDefaultTokenProviders();
 
-                    return Task.FromResult(0);
-                }
-            });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = Configuration["Tokens:Issuer"],
+                        ValidAudience = Configuration["Tokens:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                    };
+                });
+
+            services.AddApplicationInsightsTelemetry(Configuration);
 
             //Add framework services.
             services.AddOptions();
             services.AddMvc();
-            
-            services.AddApplicationInsightsTelemetry(Configuration);
+          
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +98,9 @@ namespace FourWallpapers {
             }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
+
             app.UseMvc(routes => {
                 routes.MapRoute(
                     "default",

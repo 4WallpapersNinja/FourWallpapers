@@ -15,22 +15,18 @@
 
   <ItemGroup>
     <Compile Remove="Logs\**" />
-    <Compile Remove="Models\**" />
     <Compile Remove="Services\**" />
     <Compile Remove="wwwrootsrc\**" />
     <Compile Remove="wwwroot\**" />
     <Content Remove="Logs\**" />
-    <Content Remove="Models\**" />
     <Content Remove="Services\**" />
     <Content Remove="wwwrootsrc\**" />
     <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="Logs\**" />
-    <EmbeddedResource Remove="Models\**" />
     <EmbeddedResource Remove="Services\**" />
     <EmbeddedResource Remove="wwwrootsrc\**" />
     <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="Logs\**" />
-    <None Remove="Models\**" />
     <None Remove="Services\**" />
     <None Remove="wwwrootsrc\**" />
     <None Remove="wwwroot\**" />
@@ -42,10 +38,13 @@
     <None Remove="wwwroot_source\app\core\models\searchRequest.ts" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Identity.Dapper" Version="0.5.2-alpha" />
+    <PackageReference Include="Identity.Dapper.SqlServer" Version="0.5.2-alpha" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
@@ -90,6 +89,9 @@
     <None Update="wwwroot_source\app\pages\search\random.component.js">
       <DependentUpon>random.component.ts</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot_source\app\admin\" />
   </ItemGroup>
 
 </Project>
