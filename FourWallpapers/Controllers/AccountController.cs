@@ -1,44 +1,47 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using FourWallpapers.Models;
-using FourWallpapers.Models.Requests;
-using Identity.Dapper.Entities;
+using FourWallpapers.Core.Database.Entities;
+using FourWallpapers.Core.Database.Repositories;
+using FourWallpapers.Core.Models.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor.Internal;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace FourWallpapers.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "AuthorizeJwt")]
     public class AccountController : Controller
     {
-        private readonly UserManager<DapperIdentityUser> _userManager;
-        private readonly SignInManager<DapperIdentityUser> _signInManager;
-        private readonly ILogger _logger;
+        private readonly IUserRepository _userRepository;
         private readonly IConfiguration _config;
 
         public AccountController(
-            UserManager<DapperIdentityUser> userManager,
-            SignInManager<DapperIdentityUser> signInManager,
+            IUserRepository userRepository,
             ILoggerFactory loggerFactory,
             IConfiguration config)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = loggerFactory.CreateLogger<AccountController>();
-
+            _userRepository = userRepository;
             _config = config;
         }
         //public async Task<IActionResult> Register([FromBody])
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(Register model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new User {Username = model.Email, Email = model.Email};
+                var result = await _userRepository.CreateAsync(user, model.Password);
+            }
+            return Ok();
+        }
 
         [AllowAnonymous]
         [HttpPost]
@@ -46,18 +49,19 @@ namespace FourWallpapers.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                var user = await _userRepository.FindByEmailAsync(model.Email);
 
                 if (user != null)
                 {
-                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-                    if (result.Succeeded)
+                    var result = await _userRepository.CheckPasswordSignInAsync(user, model.Password);
+                    if (result)
                     {
-
+                        string shaHash = Helpers.Auth.HashUser(user);
                         var claims = new[]
                         {
                             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                            new Claim("AuthHash", shaHash)
                         };
 
                         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
@@ -66,7 +70,7 @@ namespace FourWallpapers.Controllers
                         var token = new JwtSecurityToken(_config["Tokens:Issuer"],
                             _config["Tokens:Issuer"],
                             claims,
-                            expires: DateTime.Now.AddDays(30),
+                            expires: DateTime.Now.AddDays(7),
                             signingCredentials: creds);
 
                         return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });

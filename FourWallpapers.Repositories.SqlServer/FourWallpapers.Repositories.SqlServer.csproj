@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FourWallpapers.Core\FourWallpapers.Core.csproj" />
-    <ProjectReference Include="..\FourWallpapers.Models\FourWallpapers.Models.csproj" />
   </ItemGroup>
   
 </Project>

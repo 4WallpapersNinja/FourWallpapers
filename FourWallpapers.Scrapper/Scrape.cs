@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using FourWallpapers.Core;
-using FourWallpapers.Models;
+using FourWallpapers.Core.Database.Entities;
 using FourWallpapers.Scrapper.SiteScrappers;
-using ImageSharp;
-using Image = ImageSharp.Image;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
+using SixLabors.Shapes;
 
 namespace FourWallpapers.Scrapper
 {
@@ -140,7 +144,7 @@ namespace FourWallpapers.Scrapper
 
                             if (image == null) continue;
 
-                            download.Hash = Core.Helpers.ByteToString(sha512.ComputeHash(image));
+                            download.Hash = Core.Helpers.Utilities.ByteToString(sha512.ComputeHash(image));
 
                             //Helpers.LogMessage($"{download.ImageId} : Processing Image");
 
@@ -163,7 +167,7 @@ namespace FourWallpapers.Scrapper
                                 continue;
                             }
 
-                            var sanitizedId = Core.Helpers.ByteToString(md5.ComputeHash(image));
+                            var sanitizedId = Core.Helpers.Utilities.ByteToString(md5.ComputeHash(image));
 
                             var filename = $"{sanitizedId}.{download.ImageExtension}";
 
@@ -174,7 +178,8 @@ namespace FourWallpapers.Scrapper
 
                             if (!File.Exists($"{_globalSettings.Scraper.ThumbnailLocation}{filename}") ||
                                 string.IsNullOrWhiteSpace(download.Resolution))
-                                using (var imageData = new Image(image))
+                            {
+                                using (Image<Rgba32> imageData = SixLabors.ImageSharp.Image.Load(image))
                                 {
                                     if (string.IsNullOrWhiteSpace(download.Resolution))
                                         download.Resolution = $"{imageData.Width}x{imageData.Height}";
@@ -195,38 +200,14 @@ namespace FourWallpapers.Scrapper
                                     if (!File.Exists(
                                         $"{_globalSettings.Scraper.ThumbnailLocation}{filename}"))
                                     {
-                                        int newHeight, newWidth;
-                                        try
+                                        using (Image<Rgba32> thumbnailData = ResizeImageToThumbnail(imageData))
                                         {
-                                            if (imageData.Height > imageData.Width)
-                                            {
-                                                newHeight = Constants.ThumbnailSize;
-                                                newWidth = imageData.Width /
-                                                           (imageData.Height / Constants.ThumbnailSize);
-                                            }
-                                            else
-                                            {
-                                                newWidth = Constants.ThumbnailSize;
-                                                newHeight = imageData.Height /
-                                                            (imageData.Width / Constants.ThumbnailSize);
-                                            }
+                                            thumbnailData.Save(
+                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename}");
                                         }
-                                        catch
-                                        {
-                                            Helpers.LogMessage($"Thumbnail attempted to divide by zero?");
-                                            newWidth = Constants.ThumbnailSize;
-                                            newHeight = Constants.ThumbnailSize;
-                                        }
-
-                                        //thumbnail doesnt exists make it
-                                        imageData.Resize(newWidth, newHeight);
-                                        imageData.Save(
-                                            $"{_globalSettings.Scraper.ThumbnailLocation}{filename}");
-                                        imageData.Dispose();
-                                        //Helpers.LogMessage($"{download.ImageId} :: Saved Thumbnail!");
                                     }
                                 }
-
+                            }
 
                             //add to scrape repo
                             _repos.ImageScrapeRepository.AddAsync(new ImageScrape
@@ -239,7 +220,7 @@ namespace FourWallpapers.Scrapper
                             //Helpers.LogMessage($"{download.ImageId} :: Marked as Scraped!");
 
                             //build new image
-                            var newImage = new Models.Image
+                            var newImage = new Core.Database.Entities.Image
                             {
                                 ImageId = sanitizedId,
                                 Class = download.Class,
@@ -258,7 +239,7 @@ namespace FourWallpapers.Scrapper
                             };
 
                             //calculate ratio
-                            var r = Core.Helpers.RatioCalculate(newImage.ResolutionX, newImage.ResolutionY);
+                            var r = Core.Helpers.Utilities.RatioCalculate(newImage.ResolutionX, newImage.ResolutionY);
 
 
                             try
@@ -281,6 +262,54 @@ namespace FourWallpapers.Scrapper
                     }
                 }
             }
+        }
+
+        private static Image<Rgba32> ResizeImageToThumbnail(Image<Rgba32> imageData)
+        {
+            return imageData.Clone(x => x.Resize(new ResizeOptions
+            {
+                Size = new Size(Constants.ThumbnailSize, Constants.ThumbnailSize),
+                Mode = ResizeMode.Max
+            }).Apply(i => ApplyRoundedCorners(i, 20)));
+        }
+
+        // This method can be seen as an inline implementation of an `IImageProcessor`:
+        // (The combination of `IImageOperations.Apply()` + this could be replaced with an `IImageProcessor`)
+        private static void ApplyRoundedCorners(Image<Rgba32> img, float cornerRadius)
+        {
+            IPathCollection corners = BuildCorners(img.Width, img.Height, cornerRadius);
+
+            // mutating in here as we already have a cloned original
+            img.Mutate(x => x.Fill(Rgba32.Transparent, corners, new GraphicsOptions(true)
+            {
+                BlenderMode =
+                    PixelBlenderMode
+                        .Src // enforces that any part of this shape that has color is punched out of the background
+            }));
+        }
+
+        private static IPathCollection BuildCorners(int imageWidth, int imageHeight, float cornerRadius)
+        {
+            // first create a square
+            var rect = new RectangularePolygon(-0.5f, -0.5f, cornerRadius, cornerRadius);
+
+            // then cut out of the square a circle so we are left with a corner
+            IPath cornerToptLeft =
+                rect.Clip(new EllipsePolygon(cornerRadius - 0.5f, cornerRadius - 0.5f, cornerRadius));
+
+            // corner is now a corner shape positions top left
+            //lets make 3 more positioned correctly, we can do that by translating the orgional artound the center of the image
+            var center = new Vector2(imageWidth / 2F, imageHeight / 2F);
+
+            float rightPos = imageWidth - cornerToptLeft.Bounds.Width + 1;
+            float bottomPos = imageHeight - cornerToptLeft.Bounds.Height + 1;
+
+            // move it across the widthof the image - the width of the shape
+            IPath cornerTopRight = cornerToptLeft.RotateDegree(90).Translate(rightPos, 0);
+            IPath cornerBottomLeft = cornerToptLeft.RotateDegree(-90).Translate(0, bottomPos);
+            IPath cornerBottomRight = cornerToptLeft.RotateDegree(180).Translate(rightPos, bottomPos);
+
+            return new PathCollection(cornerToptLeft, cornerBottomLeft, cornerTopRight, cornerBottomRight);
         }
     }
 }

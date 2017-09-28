@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FourWallpapers", "FourWallp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FourWallpapers.Core", "FourWallpapers.Core\FourWallpapers.Core.csproj", "{F75BD2E7-A4F4-4FB9-8313-A112ED28F64C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FourWallpapers.Models", "FourWallpapers.Models\FourWallpapers.Models.csproj", "{7239B2EC-B6F1-494E-BCDB-F73716D248C2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FourWallpapers.Scrapper", "FourWallpapers.Scrapper\FourWallpapers.Scrapper.csproj", "{3EC59A0A-6A7F-44F2-BC65-CA3A1648BD5D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FourWallpapers.Scrapper.CLI", "FourWallpapers.Scrapper.CLI\FourWallpapers.Scrapper.CLI.csproj", "{EE41760F-FB4C-498F-967E-8D29ADDAC157}"
@@ -16,6 +14,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FourWallpapers.Repositories.SqlServer", "FourWallpapers.Repositories.SqlServer\FourWallpapers.Repositories.SqlServer.csproj", "{6D2B2B2A-A30C-4996-87AF-E5E57DE1F27B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FourWallpapers.Repositories.SqlServer.Tests", "FourWallpapers.Repositories.SqlServer.Tests\FourWallpapers.Repositories.SqlServer.Tests.csproj", "{D524D162-1482-4F39-935D-D11E955F0D57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FourWallpapers.Providers.TwoFactorAuthentication", "FourWallpapers.Providers.TwoFactorAuthentication\FourWallpapers.Providers.TwoFactorAuthentication.csproj", "{F51BFED7-F07E-4C66-9B83-A6C8E1715EDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FourWallpapers.Providers.TwoFactorAuthentication.Tests", "FourWallpapers.Providers.TwoFactorAuthentication.Tests\FourWallpapers.Providers.TwoFactorAuthentication.Tests.csproj", "{6C0444E6-C3CA-43E5-8A6E-AE4C4D90A01F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +33,6 @@ Global
 		{F75BD2E7-A4F4-4FB9-8313-A112ED28F64C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F75BD2E7-A4F4-4FB9-8313-A112ED28F64C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F75BD2E7-A4F4-4FB9-8313-A112ED28F64C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7239B2EC-B6F1-494E-BCDB-F73716D248C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7239B2EC-B6F1-494E-BCDB-F73716D248C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7239B2EC-B6F1-494E-BCDB-F73716D248C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7239B2EC-B6F1-494E-BCDB-F73716D248C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3EC59A0A-6A7F-44F2-BC65-CA3A1648BD5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3EC59A0A-6A7F-44F2-BC65-CA3A1648BD5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EC59A0A-6A7F-44F2-BC65-CA3A1648BD5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +49,14 @@ Global
 		{D524D162-1482-4F39-935D-D11E955F0D57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D524D162-1482-4F39-935D-D11E955F0D57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D524D162-1482-4F39-935D-D11E955F0D57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F51BFED7-F07E-4C66-9B83-A6C8E1715EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F51BFED7-F07E-4C66-9B83-A6C8E1715EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F51BFED7-F07E-4C66-9B83-A6C8E1715EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F51BFED7-F07E-4C66-9B83-A6C8E1715EDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C0444E6-C3CA-43E5-8A6E-AE4C4D90A01F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C0444E6-C3CA-43E5-8A6E-AE4C4D90A01F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C0444E6-C3CA-43E5-8A6E-AE4C4D90A01F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C0444E6-C3CA-43E5-8A6E-AE4C4D90A01F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

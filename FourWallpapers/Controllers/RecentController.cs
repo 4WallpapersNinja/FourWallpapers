@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FourWallpapers.Core;
-using FourWallpapers.Models;
-using FourWallpapers.Models.Repositories;
+using FourWallpapers.Core.Database.Entities;
+using FourWallpapers.Core.Database.Repositories;
+using FourWallpapers.Core.Models.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 

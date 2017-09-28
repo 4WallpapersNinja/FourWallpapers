@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using System.IO;
 using System.Threading;
-using FourWallpapers.Models.Repositories;
+using FourWallpapers.Core.Database.Repositories;
 
 namespace FourWallpapers.Repositories.SqlServer.Tests.Helpers
 {

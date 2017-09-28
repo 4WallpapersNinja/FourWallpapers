@@ -35,7 +35,7 @@ namespace FourWallpapers.Scrapper
             try
             {
                 if (string.IsNullOrWhiteSpace(json)) return;
-                var images = JsonHelpers.LoadJson<ImgurJson>(json);
+                var images = Core.Helpers.Json.LoadJson<ImgurJson>(json);
 
                 if (images.Item.album_images.images.Any())
                 {

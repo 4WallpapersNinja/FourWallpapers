@@ -5,9 +5,9 @@ using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
+using FourWallpapers.Core.Database.Entities;
+using FourWallpapers.Core.Database.Repositories;
 using FourWallpapers.Core.Settings;
-using FourWallpapers.Models;
-using FourWallpapers.Models.Repositories;
 
 namespace FourWallpapers.Repositories.SqlServer
 {

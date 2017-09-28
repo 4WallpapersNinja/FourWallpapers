@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using FourWallpapers.Models;
-using FourWallpapers.Models.Repositories;
-using FourWallpapers.Models.Requests;
+using FourWallpapers.Core.Database.Entities;
+using FourWallpapers.Core.Database.Repositories;
+using FourWallpapers.Core.Models.Request;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FourWallpapers.Controllers {

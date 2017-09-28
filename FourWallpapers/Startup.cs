@@ -1,19 +1,12 @@
-﻿using System;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using FourWallpapers.Core;
-using FourWallpapers.Models;
-using FourWallpapers.Models.Repositories;
-using Identity.Dapper;
-using Identity.Dapper.Entities;
-using Identity.Dapper.SqlServer;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using FourWallpapers.Core.Database.Repositories;
+using FourWallpapers.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -59,14 +52,7 @@ namespace FourWallpapers {
             services
                 .AddSingleton<IKeywordRepository,
                     Repositories.SqlServer.KeywordRepository>();
-
-            services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
-                .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
-
-            services.AddIdentity<DapperIdentityUser, DapperIdentityRole>()
-                .AddDapperIdentityForSqlServer()
-                .AddDefaultTokenProviders();
-
+            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.RequireHttpsMetadata = false;
@@ -76,9 +62,16 @@ namespace FourWallpapers {
                     {
                         ValidIssuer = Configuration["Tokens:Issuer"],
                         ValidAudience = Configuration["Tokens:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"])),
                     };
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AuthorizeJwt", policy => policy.Requirements.Add(new AuthorizedTokeRequirement()));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, AuthorizedTokenHandler>();
 
             services.AddApplicationInsightsTelemetry(Configuration);
 

@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using FourWallpapers.Core.Database.Entities;
+using FourWallpapers.Core.Database.Repositories;
 using FourWallpapers.Core.Settings;
-using FourWallpapers.Models;
-using FourWallpapers.Models.Repositories;
 using FourWallpapers.Repositories.SqlServer.Helpers;
 
 namespace FourWallpapers.Repositories.SqlServer

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using FourWallpapers.Models;
+using FourWallpapers.Core.Database.Entities;
 
 namespace FourWallpapers.Repositories.SqlServer.Helpers
 {

@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FourWallpapers.Models\FourWallpapers.Models.csproj" />
     <ProjectReference Include="..\FourWallpapers.Repositories.SqlServer\FourWallpapers.Repositories.SqlServer.csproj" />
   </ItemGroup>
 

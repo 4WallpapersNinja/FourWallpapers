@@ -6,13 +6,13 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.9" />
-    <PackageReference Include="RevStackCore-ImageSharp" Version="0.9.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0001" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0001" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FourWallpapers.Core\FourWallpapers.Core.csproj" />
-    <ProjectReference Include="..\FourWallpapers.Models\FourWallpapers.Models.csproj" />
     <ProjectReference Include="..\FourWallpapers.Repositories.SqlServer\FourWallpapers.Repositories.SqlServer.csproj" />
   </ItemGroup>
 

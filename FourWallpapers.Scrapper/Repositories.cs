@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using FourWallpapers.Core;
-using FourWallpapers.Models.Repositories;
+using FourWallpapers.Core.Database.Repositories;
+using FourWallpapers.Core.Helpers;
 using FourWallpapers.Repositories.SqlServer;
 
 namespace FourWallpapers.Scrapper

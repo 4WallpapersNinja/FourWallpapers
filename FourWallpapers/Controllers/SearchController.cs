@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FourWallpapers.Core;
-using FourWallpapers.Models;
-using FourWallpapers.Models.Repositories;
-using FourWallpapers.Models.Requests;
+using FourWallpapers.Core.Database.Entities;
+using FourWallpapers.Core.Database.Repositories;
+using FourWallpapers.Core.Helpers;
+using FourWallpapers.Core.Models.Request;
+using FourWallpapers.Core.Models.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -32,7 +34,7 @@ namespace FourWallpapers.Controllers {
             string key;
             using (var md5 = System.Security.Cryptography.MD5.Create()) {
                 //calculate key
-                key = Core.Helpers.ByteToString(
+                key = Utilities.ByteToString(
                     md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.ToJson())));
             }
 
