@@ -10,6 +10,7 @@ using Identity.Dapper.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor.Internal;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -37,10 +38,11 @@ namespace FourWallpapers.Controllers
 
             _config = config;
         }
+        //public async Task<IActionResult> Register([FromBody])
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> GenerateToken([FromBody] LoginRequest model)
+        public async Task<IActionResult> GenerateToken([FromBody] Login model)
         {
             if (ModelState.IsValid)
             {

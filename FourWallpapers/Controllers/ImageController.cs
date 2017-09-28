@@ -24,7 +24,7 @@ namespace FourWallpapers.Controllers {
         // GET api/Image/{imageId}/update
         [HttpPost]
         [Route("{imageId}/update")]
-        public async Task Keywords(string imageId, [FromBody] UpdateRequest updateRequest) {
+        public async Task Keywords(string imageId, [FromBody] Update updateRequest) {
             await _repo.UpdateImageAsync(imageId, updateRequest, CancellationToken.None);
         }
     }

@@ -24,7 +24,7 @@ namespace FourWallpapers.Controllers {
 
         // POST api/search
         [HttpPost]
-        public async Task<List<SearchResult>> Post([FromBody] SearchRequest request) {
+        public async Task<List<SearchResult>> Post([FromBody] Search request) {
             if (request == null) return new List<SearchResult>();
 
             if (!_settings.Cache.Database) return await _repo.SearchAsync(request, CancellationToken.None);

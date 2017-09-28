@@ -33,7 +33,7 @@ namespace FourWallpapers.Repositories.SqlServer
             InitializeQueries();
         }
 
-        public async Task<List<SearchResult>> SearchAsync(SearchRequest request, CancellationToken cancellationToken)
+        public async Task<List<SearchResult>> SearchAsync(Search request, CancellationToken cancellationToken)
         {
             using (var dbConnection = Connection())
             {
@@ -91,7 +91,7 @@ namespace FourWallpapers.Repositories.SqlServer
             }
         }
 
-        public async Task<List<SearchResult>> TopImageSearchAsync(TopRequest topRequest,
+        public async Task<List<SearchResult>> TopImageSearchAsync(Top topRequest,
             CancellationToken cancellationToken)
         {
             using (var dbConnection = Connection())

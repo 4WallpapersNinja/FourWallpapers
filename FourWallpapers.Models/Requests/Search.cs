@@ -3,7 +3,7 @@ using FourWallpapers.Core;
 
 namespace FourWallpapers.Models.Requests
 {
-    public class SearchRequest
+    public class Search
     {
         public Enums.Classes Class { get; set; }
         public string Resolution { get; set; }

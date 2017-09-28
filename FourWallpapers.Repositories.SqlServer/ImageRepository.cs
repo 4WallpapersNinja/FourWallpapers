@@ -83,7 +83,7 @@ namespace FourWallpapers.Repositories.SqlServer
             }
         }
 
-        public async Task UpdateImageAsync(string imageId, UpdateRequest updateRequest,
+        public async Task UpdateImageAsync(string imageId, Update updateRequest,
             CancellationToken cancellationToken)
         {
             // check if is locked image

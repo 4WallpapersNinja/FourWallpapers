@@ -8,9 +8,9 @@ namespace FourWallpapers.Models.Repositories
 {
     public interface ISearchRepository : IRepository<Image>
     {
-        Task<List<SearchResult>> SearchAsync(SearchRequest request, CancellationToken cancellationToken);
+        Task<List<SearchResult>> SearchAsync(Search request, CancellationToken cancellationToken);
 
-        Task<List<SearchResult>> TopImageSearchAsync(TopRequest updateRequest, CancellationToken cancellationToken);
+        Task<List<SearchResult>> TopImageSearchAsync(Top updateRequest, CancellationToken cancellationToken);
 
         Task<List<SearchResult>> GetRecentAsync(CancellationToken cancellationToken);
 

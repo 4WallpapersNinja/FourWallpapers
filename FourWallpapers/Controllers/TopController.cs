@@ -25,7 +25,7 @@ namespace FourWallpapers.Controllers {
         // GET api/top
         [HttpGet]
         public async Task<List<SearchResult>> Index() {
-            var request = new TopRequest() {By = "Total"};
+            var request = new Top() {By = "Total"};
 
             if (!_settings.Cache.Database) return await _repo.TopImageSearchAsync(request, CancellationToken.None);
 
@@ -40,7 +40,7 @@ namespace FourWallpapers.Controllers {
         [HttpGet]
         [Route("source/{id}")]
         public async Task<List<SearchResult>> Source(Enums.Sources id) {
-            var request = new TopRequest() {By = "Source", Source = id};
+            var request = new Top() {By = "Source", Source = id};
 
             if (!_settings.Cache.Database) return await _repo.TopImageSearchAsync(request, CancellationToken.None);
 
@@ -56,7 +56,7 @@ namespace FourWallpapers.Controllers {
         [HttpGet]
         [Route("classification/{id}")]
         public async Task<List<SearchResult>> Source(Enums.Classes id) {
-            var request = new TopRequest() {By = "Classification", Class = id};
+            var request = new Top() {By = "Classification", Class = id};
 
             if (!_settings.Cache.Database) return await _repo.TopImageSearchAsync(request, CancellationToken.None);
 

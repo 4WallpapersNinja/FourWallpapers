@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FourWallpapers.Models.Requests
 {
-    public class LoginRequest
+    public class Login
     {
         [Required]
         [EmailAddress]

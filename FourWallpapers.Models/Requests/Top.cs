@@ -2,7 +2,7 @@
 
 namespace FourWallpapers.Models.Requests
 {
-    public class TopRequest
+    public class Top
     {
         public string By { get; set; }
         public Enums.Classes Class { get; set; }

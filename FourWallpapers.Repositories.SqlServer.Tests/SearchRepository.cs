@@ -117,7 +117,7 @@ namespace FourWallpapers.Repositories.SqlServer.Tests
             await LoadData();
 
             //keyword + 
-            var request = new SearchRequest()
+            var request = new Search()
             {
                 Class = Enums.Classes.SafeForWork,
                 Criteria = "rule34",
@@ -141,7 +141,7 @@ namespace FourWallpapers.Repositories.SqlServer.Tests
             await LoadData();
 
             //keyword + 
-            var request = new SearchRequest()
+            var request = new Search()
             {
                 Class = Enums.Classes.Any,
                 Criteria = "",
@@ -162,7 +162,7 @@ namespace FourWallpapers.Repositories.SqlServer.Tests
         public async Task TopImageSearchAsyncSource()
         {
             await LoadData();
-            var request = new TopRequest()
+            var request = new Top()
             {
                 By = "source",
                 Source = Enums.Sources.RedditEarthPorn
@@ -176,7 +176,7 @@ namespace FourWallpapers.Repositories.SqlServer.Tests
         public async Task TopImageSearchAsyncClassification()
         {
             await LoadData();
-            var request = new TopRequest()
+            var request = new Top()
             {
                 By = "classification",
                 Class = Enums.Classes.SafeForWork
@@ -190,7 +190,7 @@ namespace FourWallpapers.Repositories.SqlServer.Tests
         public async Task TopImageSearchAsyncTotal()
         {
             await LoadData();
-            var request = new TopRequest()
+            var request = new Top()
             {
                 By = "total"
             };

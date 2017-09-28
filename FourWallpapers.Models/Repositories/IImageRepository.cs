@@ -22,6 +22,6 @@ namespace FourWallpapers.Models.Repositories
         /// <param name="updateRequest">updates requested</param>
         /// <param name="cancellationToken">task cancellation token</param>
         /// <returns></returns>
-        Task UpdateImageAsync(string imageId, UpdateRequest updateRequest, CancellationToken cancellationToken);
+        Task UpdateImageAsync(string imageId, Update updateRequest, CancellationToken cancellationToken);
     }
 }

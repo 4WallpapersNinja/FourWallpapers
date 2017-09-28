@@ -76,14 +76,14 @@ namespace FourWallpapers.Repositories.SqlServer.Tests
         {
             await LoadData();
 
-            var update = new UpdateRequest {Key = "Class", Value = "1"};
+            var update = new Update {Key = "Class", Value = "1"};
             await _imageRepository.UpdateImageAsync("001", update, CancellationToken.None);
 
 
-            update = new UpdateRequest {Key = "Keywords", Value = "testing,update"};
+            update = new Update {Key = "Keywords", Value = "testing,update"};
             await _imageRepository.UpdateImageAsync("001", update, CancellationToken.None);
 
-            update = new UpdateRequest {Key = "Report", Value = "Reported"};
+            update = new Update {Key = "Report", Value = "Reported"};
             await _imageRepository.UpdateImageAsync("001", update, CancellationToken.None);
             var result = await _imageRepository.FindByImageIdAsync("001", CancellationToken.None, false);
 
