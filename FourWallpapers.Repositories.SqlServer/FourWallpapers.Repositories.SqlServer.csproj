@@ -17,5 +17,9 @@
   <ItemGroup>
     <ProjectReference Include="..\FourWallpapers.Core\FourWallpapers.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Queries\User\" />
+  </ItemGroup>
   
 </Project>

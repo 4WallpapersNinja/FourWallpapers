@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[UserRole]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL,
+	[IdKey] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	
+    CONSTRAINT [PK_UserRole] PRIMARY KEY NONCLUSTERED ([Id])
+)

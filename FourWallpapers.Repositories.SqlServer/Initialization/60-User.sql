@@ -1,0 +1,10 @@
+﻿CREATE TABLE [dbo].[User]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL,
+	[IdKey] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	
+    CONSTRAINT [PK_User] PRIMARY KEY NONCLUSTERED ([Id])
+)
+GO
+
+CREATE UNIQUE INDEX [IX_UserId] ON [dbo].[Image] ([Id])

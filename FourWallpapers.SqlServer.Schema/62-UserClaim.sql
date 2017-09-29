@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[UserClaim]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL,
+	[IdKey] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	
+    CONSTRAINT [PK_UserClaim] PRIMARY KEY NONCLUSTERED ([Id]), 
+)
