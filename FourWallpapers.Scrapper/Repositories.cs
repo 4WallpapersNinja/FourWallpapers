@@ -17,7 +17,7 @@ namespace FourWallpapers.Scrapper
         public readonly IImageRepository ImageRepository;
         public readonly IImageScrapeRepository ImageScrapeRepository;
 
-        public readonly Queue<ImageDetail> Queue;
+        public Queue<ImageDetail> Queue;
 
         public ScrapeRepositories(IGlobalSettings globalSettings)
         {

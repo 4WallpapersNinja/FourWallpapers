@@ -69,6 +69,11 @@ namespace FourWallpapers.Scrapper.SiteScrappers
                             .ExistsAsync(image.ImageId, image.IndexSource, CancellationToken.None).GetAwaiter()
                             .GetResult()) continue;
 
+                        if (ScrapeRepositories.Queue.Any(i =>
+                            i.ImageId == image.ImageId && i.IndexSource == image.IndexSource))
+                        {
+                            continue;
+                        }
                         Helpers.LogMessage($"Image not in Scrape Repo {image.ImageId}");
                         ScrapeRepositories.Queue.Enqueue(image);
                     }

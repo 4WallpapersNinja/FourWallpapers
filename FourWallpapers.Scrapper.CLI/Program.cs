@@ -30,7 +30,7 @@ namespace FourWallpapers.Scrapper.CLI
             scraper.Run();
             Console.WriteLine($"{DateTime.UtcNow} :: Scrapper CLI Finished!");
 
-            //Console.ReadLine();
+            Console.ReadLine();
         }
     }
 }

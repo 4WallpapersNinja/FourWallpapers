@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FourWallpapers.Core;
 using FourWallpapers.Core.Database.Entities;
 using FourWallpapers.Scrapper.SiteScrappers;
+using NUglify.Helpers;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -83,13 +84,14 @@ namespace FourWallpapers.Scrapper
                     Helpers.LogMessage($"Error Message {ex.Message}!");
                 }
 
-            Helpers.LogMessage($"Images to Download {_repos.Queue.Count}!");
+            _repos.Queue = new Queue<ImageDetail>(_repos.Queue.DistinctBy(i => new { i.ImageId, i.IndexSource }));
 
+            Helpers.LogMessage($"Images to Download {_repos.Queue.Count}!");
             //list of all running tasks
             var runningTasks = new List<Task>();
-
+            var threadCount = _repos.Queue.Count > 4 ? 4 : _repos.Queue.Count;
             //create the tasks for downloads
-            for (var x = 0; x < 4; x++) runningTasks.Add(Task.Run(() => ProcessImages()));
+            for (var x = 0; x < threadCount; x++) runningTasks.Add(Task.Run(() => ProcessImages()));
 
             //create the task that waits for them to complete
             var completed = Task.WhenAll(runningTasks);
@@ -270,21 +272,6 @@ namespace FourWallpapers.Scrapper
             {
                 Size = new Size(Constants.ThumbnailSize, Constants.ThumbnailSize),
                 Mode = ResizeMode.Max
-            }).Apply(i => ApplyRoundedCorners(i, 20)));
-        }
-
-        // This method can be seen as an inline implementation of an `IImageProcessor`:
-        // (The combination of `IImageOperations.Apply()` + this could be replaced with an `IImageProcessor`)
-        private static void ApplyRoundedCorners(Image<Rgba32> img, float cornerRadius)
-        {
-            IPathCollection corners = BuildCorners(img.Width, img.Height, cornerRadius);
-
-            // mutating in here as we already have a cloned original
-            img.Mutate(x => x.Fill(Rgba32.Transparent, corners, new GraphicsOptions(true)
-            {
-                BlenderMode =
-                    PixelBlenderMode
-                        .Src // enforces that any part of this shape that has color is punched out of the background
             }));
         }
 
