@@ -45,8 +45,7 @@ export class RecentComponent implements OnInit {
 
     imageUrl(image: SearchResult) {
         if (image != null && image.server != null) {
-            return `//shinobi${image.server}.4wp.ninja/thumbnails/${image
-                .imageId}.${image.fileExtension}`;
+            return `//shinobi${image.server}.4wp.ninja/thumbnails/${image.filePath}`;
         }
         return '/assets/loadingStar.svg';
     }

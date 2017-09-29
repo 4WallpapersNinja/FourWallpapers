@@ -15,7 +15,7 @@
 export class SearchResult {
     constructor(
         public imageId: string,
-        public fileExtension: string,
+        public filePath: string,
         public server: string,
         public isThumbnailAvailable: boolean) {}
 }
