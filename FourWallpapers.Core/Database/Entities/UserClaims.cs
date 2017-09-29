@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace FourWallpapers.Core.Database.Entities
 {
     public class UserClaim : BaseEntity
