@@ -174,7 +174,7 @@ namespace FourWallpapers.Scrapper
                             var filename = $"{sanitizedId}.{download.ImageExtension}";
 
                             //if hash doesnt exists
-                            if (!File.Exists($"{_globalSettings.Scraper.ImageLocation}{filename}"))
+                            if (!File.Exists($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 3)}/{filename}"))
                                 File.WriteAllBytes($"{_globalSettings.Scraper.ImageLocation}{filename}",
                                     image);
 
@@ -200,12 +200,12 @@ namespace FourWallpapers.Scrapper
                                     }
 
                                     if (!File.Exists(
-                                        $"{_globalSettings.Scraper.ThumbnailLocation}{filename}"))
+                                        $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0,3)}/{filename}"))
                                     {
                                         using (Image<Rgba32> thumbnailData = ResizeImageToThumbnail(imageData))
                                         {
                                             thumbnailData.Save(
-                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename}");
+                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 3)}/{filename}");
                                         }
                                     }
                                 }
@@ -273,30 +273,6 @@ namespace FourWallpapers.Scrapper
                 Size = new Size(Constants.ThumbnailSize, Constants.ThumbnailSize),
                 Mode = ResizeMode.Max
             }));
-        }
-
-        private static IPathCollection BuildCorners(int imageWidth, int imageHeight, float cornerRadius)
-        {
-            // first create a square
-            var rect = new RectangularePolygon(-0.5f, -0.5f, cornerRadius, cornerRadius);
-
-            // then cut out of the square a circle so we are left with a corner
-            IPath cornerToptLeft =
-                rect.Clip(new EllipsePolygon(cornerRadius - 0.5f, cornerRadius - 0.5f, cornerRadius));
-
-            // corner is now a corner shape positions top left
-            //lets make 3 more positioned correctly, we can do that by translating the orgional artound the center of the image
-            var center = new Vector2(imageWidth / 2F, imageHeight / 2F);
-
-            float rightPos = imageWidth - cornerToptLeft.Bounds.Width + 1;
-            float bottomPos = imageHeight - cornerToptLeft.Bounds.Height + 1;
-
-            // move it across the widthof the image - the width of the shape
-            IPath cornerTopRight = cornerToptLeft.RotateDegree(90).Translate(rightPos, 0);
-            IPath cornerBottomLeft = cornerToptLeft.RotateDegree(-90).Translate(0, bottomPos);
-            IPath cornerBottomRight = cornerToptLeft.RotateDegree(180).Translate(rightPos, bottomPos);
-
-            return new PathCollection(cornerToptLeft, cornerBottomLeft, cornerTopRight, cornerBottomRight);
         }
     }
 }

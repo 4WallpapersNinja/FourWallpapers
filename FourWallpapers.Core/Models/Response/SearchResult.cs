@@ -9,7 +9,7 @@ namespace FourWallpapers.Core.Models.Response
         public SearchResult(Image image)
         {
             ImageId = image.ImageId;
-            FileExtension = image.FileExtension;
+            FilePath = $"{ImageId.Substring(0,3)}/{ImageId}.{image.FileExtension}";
             Server = image.Server;
             IsThumbnailAvailable = image.IsThumbnailAvailable;
         }
@@ -18,7 +18,7 @@ namespace FourWallpapers.Core.Models.Response
         public string ImageId { get; set; }
 
         [DataMember]
-        public string FileExtension { get; set; }
+        public string FilePath { get; set; }
 
         [DataMember]
         public string Server { get; set; }
