@@ -178,7 +178,7 @@ namespace FourWallpapers.Scrapper
 
                             //if hash doesnt exists
                             if (!File.Exists($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 3)}/{filename}"))
-                                File.WriteAllBytes($"{_globalSettings.Scraper.ImageLocation}{filename}",
+                                File.WriteAllBytes($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 3)}/{filename}",
                                     image);
 
                             if (!File.Exists($"{_globalSettings.Scraper.ThumbnailLocation}{filename}") ||
