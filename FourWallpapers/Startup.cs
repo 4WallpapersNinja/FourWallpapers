@@ -53,18 +53,18 @@ namespace FourWallpapers {
                 .AddSingleton<IKeywordRepository,
                     Repositories.SqlServer.KeywordRepository>();
             
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options => {
+            //        options.RequireHttpsMetadata = false;
+            //        options.SaveToken = true;
 
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = Configuration["Tokens:Issuer"],
-                        ValidAudience = Configuration["Tokens:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"])),
-                    };
-                });
+            //        options.TokenValidationParameters = new TokenValidationParameters()
+            //        {
+            //            ValidIssuer = Configuration["Tokens:Issuer"],
+            //            ValidAudience = Configuration["Tokens:Issuer"],
+            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"])),
+            //        };
+            //    });
 
             services.AddAuthorization(options =>
             {

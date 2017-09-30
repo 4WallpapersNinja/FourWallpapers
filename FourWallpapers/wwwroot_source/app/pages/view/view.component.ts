@@ -81,7 +81,9 @@ export class ViewComponent implements OnInit, OnDestroy {
             'click');
         this.viewService.report(this.id)
             .subscribe(
-                resp => '',
+                resp => {
+                    this.back();
+                },
                 error => this.errorMessage = (error as any)
             );
     }
@@ -92,8 +94,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 
     imageUrl() {
         if (this.image != null && this.image.server != null) {
-            return `//shinobi${this.image.server}.4wp.ninja/images/${this.image
-                .imageId}.${this.image.fileExtension}`;
+            return `//shinobi${this.image.server}.4wp.ninja/images/${this.image.filePath}`;
         }
         return '/assets/loadingStar.svg';
     }

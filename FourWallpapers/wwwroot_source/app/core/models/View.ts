@@ -1,7 +1,7 @@
 ﻿export class Image {
     constructor(
         public imageId: string,
-        public fileExtension: string,
+        public filePath: string,
         public classification: string,
         public indexSource: string,
         public who: string,

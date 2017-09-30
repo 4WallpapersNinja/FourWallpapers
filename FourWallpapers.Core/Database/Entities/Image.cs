@@ -16,6 +16,9 @@ namespace FourWallpapers.Core.Database.Entities
         [DataMember]
         public string FileExtension { get; set; }
 
+        [DataMember]
+        public string FilePath => $"{ImageId.Substring(0, 3)}/{ImageId}.{FileExtension}";
+
         public Enums.Classes Class { get; set; }
 
         [DataMember]
