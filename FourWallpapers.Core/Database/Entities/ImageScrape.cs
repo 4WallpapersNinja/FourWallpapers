@@ -10,5 +10,6 @@ namespace FourWallpapers.Core.Database.Entities
         public Enums.Sources Source { get; set; }
         public string Hash { get; set; }
         public Guid ScrapeId { get; set; }
+        public DateTime Datestamp { get; set; }
     }
 }

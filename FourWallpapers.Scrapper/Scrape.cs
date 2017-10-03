@@ -89,7 +89,7 @@ namespace FourWallpapers.Scrapper
             Helpers.LogMessage($"Images to Download {_repos.Queue.Count}!");
             //list of all running tasks
             var runningTasks = new List<Task>();
-            var threadCount = _repos.Queue.Count > 4 ? 4 : _repos.Queue.Count;
+            var threadCount = _repos.Queue.Count > 6 ? 6 : _repos.Queue.Count;
             //create the tasks for downloads
             for (var x = 0; x < threadCount; x++) runningTasks.Add(Task.Run(() => ProcessImages()));
 
@@ -115,7 +115,7 @@ namespace FourWallpapers.Scrapper
         {
             try
             {
-                return _repos.Client.GetByteArrayAsync(url).Result;
+                return _repos.Client.GetByteArrayAsync(url).GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -169,16 +169,28 @@ namespace FourWallpapers.Scrapper
                                 continue;
                             }
 
+
+                            // add to scrape repo . incase the image fails it still marks it as scrapped and continues. this is for the issues with ImageSharp and memory management
+
+                            _repos.ImageScrapeRepository.AddAsync(new ImageScrape
+                            {
+                                ImageId = download.ImageId,
+                                Source = download.IndexSource,
+                                Hash = download.Hash,
+                                ScrapeId = ScrapeId,
+                                Datestamp = DateTime.UtcNow
+                            }, CancellationToken.None).GetAwaiter().GetResult();
+
                             var sanitizedId = Core.Helpers.Utilities.ByteToString(md5.ComputeHash(image));
 
                             var filename = $"{sanitizedId}.{download.ImageExtension}";
 
                             System.IO.Directory.CreateDirectory(
-                                $"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 3)}/");
+                                $"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/");
 
                             //if hash doesnt exists
-                            if (!File.Exists($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 3)}/{filename}"))
-                                File.WriteAllBytes($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 3)}/{filename}",
+                            if (!File.Exists($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/{filename}"))
+                                File.WriteAllBytes($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/{filename}",
                                     image);
 
                             if (!File.Exists($"{_globalSettings.Scraper.ThumbnailLocation}{filename}") ||
@@ -197,33 +209,27 @@ namespace FourWallpapers.Scrapper
                                             ImageId = download.ImageId,
                                             Source = download.IndexSource,
                                             Hash = download.Hash,
-                                            ScrapeId = ScrapeId
-                                        }, CancellationToken.None);
+                                            ScrapeId = ScrapeId,
+                                            Datestamp = DateTime.UtcNow
+                                        }, CancellationToken.None).GetAwaiter().GetResult();
                                         continue;
                                     }
 
                                     if (!File.Exists(
-                                        $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0,3)}/{filename}"))
+                                        $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0,2)}/{filename}"))
                                     {
                                         using (Image<Rgba32> thumbnailData = ResizeImageToThumbnail(imageData))
                                         {
                                             System.IO.Directory.CreateDirectory(
-                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 3)}/");
+                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/");
                                             thumbnailData.Save(
-                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 3)}/{filename}");
+                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/{filename}");
                                         }
                                     }
                                 }
                             }
 
-                            //add to scrape repo
-                            _repos.ImageScrapeRepository.AddAsync(new ImageScrape
-                            {
-                                ImageId = download.ImageId,
-                                Source = download.IndexSource,
-                                Hash = download.Hash,
-                                ScrapeId = ScrapeId
-                            }, CancellationToken.None);
+                            
                             //Helpers.LogMessage($"{download.ImageId} :: Marked as Scraped!");
 
                             //build new image
@@ -259,7 +265,7 @@ namespace FourWallpapers.Scrapper
                             }
 
                             //add to imageRepo?
-                            _repos.ImageRepository.AddAsync(newImage, CancellationToken.None);
+                            _repos.ImageRepository.AddAsync(newImage, CancellationToken.None).GetAwaiter().GetResult();
                             //Helpers.LogMessage($"{download.ImageId} :: Added to Repo!");
                         }
                         catch (Exception ex)

@@ -3,10 +3,12 @@
            ,[ImageId]
            ,[Source]
            ,[Hash]
-           ,[ScrapeId])
+           ,[ScrapeId]
+		   ,[Datestamp])
      VALUES
            (@Id
            ,@ImageId
            ,@Source
            ,@Hash
-           ,@ScrapeId)
+           ,@ScrapeId
+		   ,@Datestamp)

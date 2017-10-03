@@ -8,6 +8,10 @@ namespace FourWallpapers.Repositories.SqlServer
 {
     public class UserRepository : BaseSqlServerRepository<User>, IUserRepository
     {
+        private string _findUserByEmail;
+        private string _verifyEmailAndPassword;
+        private string _verifyEmailAndTwoFactor;
+
 
         public UserRepository(IDatabaseSettings db) : base(db)
         {

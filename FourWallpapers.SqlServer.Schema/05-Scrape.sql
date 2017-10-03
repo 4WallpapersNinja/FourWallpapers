@@ -4,5 +4,6 @@
     [ImageId] NVARCHAR(250) NULL, 
     [Source] INT NULL, 
     [Hash] NVARCHAR(512) NULL,
-    [ScrapeId] UNIQUEIDENTIFIER NULL
+    [ScrapeId] UNIQUEIDENTIFIER NULL, 
+    [DateStamp] DATETIME NULL
 )
