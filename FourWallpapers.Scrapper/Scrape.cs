@@ -46,6 +46,7 @@ namespace FourWallpapers.Scrapper
         public void Run()
         {
             //go thru boards
+            var runningTasks = new List<Task>();
             foreach (var boardIdentifier in _globalSettings.Scraper.Boards)
                 try
                 {
@@ -55,10 +56,11 @@ namespace FourWallpapers.Scrapper
                         case Enums.Sources.SlashV:
                         case Enums.Sources.SlashW:
                         case Enums.Sources.SlashWG:
-                            Processors["4chan"].Process(boardIdentifier);
+                            runningTasks.Add(Task.Run(() => Processors["4chan"].Process(boardIdentifier)));
+                            
                             break;
                         case Enums.Sources.SevenChan:
-                            Processors["7chan"].Process(boardIdentifier);
+                            runningTasks.Add(Task.Run(() => Processors["7chan"].Process(boardIdentifier)));
                             break;
                         case Enums.Sources.RedditWallpaper:
                         case Enums.Sources.RedditWallpapers:
@@ -70,10 +72,10 @@ namespace FourWallpapers.Scrapper
                         case Enums.Sources.RedditWQHDWallpaper:
                         case Enums.Sources.RedditWallpaperDump:
                         case Enums.Sources.RedditWidescreenWallpaper:
-                            Processors["reddit"].Process(boardIdentifier);
+                            runningTasks.Add(Task.Run(() => Processors["reddit"].Process(boardIdentifier)));
                             break;
                         case Enums.Sources.RedditNsfwWallpapers:
-                            Processors["reddit"].Process(boardIdentifier, Enums.Classes.NotSafeForWork);
+                            runningTasks.Add(Task.Run(() => Processors["reddit"].Process(boardIdentifier, Enums.Classes.NotSafeForWork)));
                             break;
                     }
                 }
@@ -84,20 +86,33 @@ namespace FourWallpapers.Scrapper
                     Helpers.LogMessage($"Error Message {ex.Message}!");
                 }
 
-            _repos.Queue = new Queue<ImageDetail>(_repos.Queue.DistinctBy(i => new { i.ImageId, i.IndexSource }));
+            // we run each crawler on it own thread then wait for all to finish
+            var iter = 0;
+            var completed = Task.WhenAll(runningTasks);
+            while (!completed.IsCompleted)
+            {
+                if (iter % 10 == 0) Helpers.LogMessage($"waiting for scraping to complete!");
+                iter++;
+                Thread.Sleep(250);
+            }
+
+            // we only want distinct urls that are not null
+            _repos.Queue = new Queue<ImageDetail>(_repos.Queue.Where(i => i != null).DistinctBy(i => i.ImageUrl));
 
             Helpers.LogMessage($"Images to Download {_repos.Queue.Count}!");
+
             //list of all running tasks
-            var runningTasks = new List<Task>();
+            runningTasks.Clear();
             var threadCount = _repos.Queue.Count > 6 ? 6 : _repos.Queue.Count;
+
             //create the tasks for downloads
             for (var x = 0; x < threadCount; x++) runningTasks.Add(Task.Run(() => ProcessImages()));
 
             //create the task that waits for them to complete
-            var completed = Task.WhenAll(runningTasks);
+            completed = Task.WhenAll(runningTasks);
 
-            var iter = 0;
 
+            iter = 0;
             //loop with a sleep 
             while (!completed.IsCompleted)
             {
@@ -130,80 +145,37 @@ namespace FourWallpapers.Scrapper
         {
             while (_repos.Queue.Count > 0)
             {
-                var download = _repos.Queue.Dequeue();
-                if (download == null) continue;
-                using (var sha512 = SHA512.Create())
+                try
                 {
-                    using (var md5 = MD5.Create())
+                    var download = _repos.Queue.Dequeue();
+                
+                    if (download == null) continue;
+                    using (var sha512 = SHA512.Create())
                     {
-                        //Helpers.LogMessage($"Starting Image : {download.ImageId}");
-                        if (download.ImageExtension == "webm") continue;
-                        try
+                        using (var md5 = MD5.Create())
                         {
-                            var image = GetImageContents(download.ImageUrl.StartsWith("http")
-                                ? download.ImageUrl
-                                : "http:" + download.ImageUrl);
-
-                            if (image == null) continue;
-
-                            download.Hash = Core.Helpers.Utilities.ByteToString(sha512.ComputeHash(image));
-
-                            //Helpers.LogMessage($"{download.ImageId} : Processing Image");
-
-                            if (_repos.ImageScrapeRepository.HashExistsAsync(download.Hash, CancellationToken.None)
-                                .GetAwaiter().GetResult())
+                            Helpers.LogMessage($"Starting Image : {download.ImageId}");
+                            if (download.ImageExtension == "webm") continue;
+                            try
                             {
-                                //hash already exists
-                                //Helpers.LogMessage($"{download.ImageId} : O Crap Duplicate");
-                                //add to scrape repo
-                                if (!_repos.ImageScrapeRepository
-                                    .ExistsAsync(download.ImageId, download.IndexSource, CancellationToken.None)
+                                var image = GetImageContents(download.ImageUrl.StartsWith("http")
+                                    ? download.ImageUrl
+                                    : "http:" + download.ImageUrl);
+
+                                if (image == null) continue;
+
+                                download.Hash = Core.Helpers.Utilities.ByteToString(sha512.ComputeHash(image));
+
+                                Helpers.LogMessage($"{download.ImageId} : Processing Image");
+
+                                if (_repos.ImageScrapeRepository.HashExistsAsync(download.Hash, CancellationToken.None)
                                     .GetAwaiter().GetResult())
-                                    _repos.ImageScrapeRepository.AddAsync(new ImageScrape
-                                    {
-                                        ImageId = download.ImageId,
-                                        Source = download.IndexSource,
-                                        Hash = download.Hash,
-                                        ScrapeId = ScrapeId
-                                    }, CancellationToken.None).GetAwaiter().GetResult();
-                                continue;
-                            }
-
-
-                            // add to scrape repo . incase the image fails it still marks it as scrapped and continues. this is for the issues with ImageSharp and memory management
-
-                            _repos.ImageScrapeRepository.AddAsync(new ImageScrape
-                            {
-                                ImageId = download.ImageId,
-                                Source = download.IndexSource,
-                                Hash = download.Hash,
-                                ScrapeId = ScrapeId,
-                                Datestamp = DateTime.UtcNow
-                            }, CancellationToken.None).GetAwaiter().GetResult();
-
-                            var sanitizedId = Core.Helpers.Utilities.ByteToString(md5.ComputeHash(image));
-
-                            var filename = $"{sanitizedId}.{download.ImageExtension}";
-
-                            System.IO.Directory.CreateDirectory(
-                                $"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/");
-
-                            //if hash doesnt exists
-                            if (!File.Exists($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/{filename}"))
-                                File.WriteAllBytes($"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/{filename}",
-                                    image);
-
-                            if (!File.Exists($"{_globalSettings.Scraper.ThumbnailLocation}{filename}") ||
-                                string.IsNullOrWhiteSpace(download.Resolution))
-                            {
-                                using (Image<Rgba32> imageData = SixLabors.ImageSharp.Image.Load(image))
                                 {
-                                    if (string.IsNullOrWhiteSpace(download.Resolution))
-                                        download.Resolution = $"{imageData.Width}x{imageData.Height}";
-
-                                    if (imageData.Height < 720 || imageData.Width < 1024)
+                                    //hash already exists
+                                    Helpers.LogMessage($"{download.ImageId} : O Crap Duplicate");
+                                    //add to scrape repo
+                                    try
                                     {
-                                        Helpers.LogMessage($"Image is too Small: {imageData.Width}x{imageData.Height}");
                                         _repos.ImageScrapeRepository.AddAsync(new ImageScrape
                                         {
                                             ImageId = download.ImageId,
@@ -212,67 +184,130 @@ namespace FourWallpapers.Scrapper
                                             ScrapeId = ScrapeId,
                                             Datestamp = DateTime.UtcNow
                                         }, CancellationToken.None).GetAwaiter().GetResult();
-                                        continue;
                                     }
-
-                                    if (!File.Exists(
-                                        $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0,2)}/{filename}"))
+                                    catch (Exception ex)
                                     {
-                                        using (Image<Rgba32> thumbnailData = ResizeImageToThumbnail(imageData))
+                                        Helpers.LogMessage($"Error Adding Dupe to Repo {download.ImageId} : Error {ex.Message}!");
+                                    }
+                                       
+                                    continue;
+                                }
+
+
+                                // add to scrape repo . incase the image fails it still marks it as scrapped and continues. this is for the issues with ImageSharp and memory management
+
+                                _repos.ImageScrapeRepository.AddAsync(new ImageScrape
+                                {
+                                    ImageId = download.ImageId,
+                                    Source = download.IndexSource,
+                                    Hash = download.Hash,
+                                    ScrapeId = ScrapeId,
+                                    Datestamp = DateTime.UtcNow
+                                }, CancellationToken.None).GetAwaiter().GetResult();
+
+                                var sanitizedId = Core.Helpers.Utilities.ByteToString(md5.ComputeHash(image));
+
+                                var filename = $"{sanitizedId}.{download.ImageExtension}";
+
+                                System.IO.Directory.CreateDirectory(
+                                    $"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/");
+
+                                //if hash doesnt exists
+                                if (!File.Exists(
+                                    $"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/{filename}"))
+                                    File.WriteAllBytes(
+                                        $"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/{filename}",
+                                        image);
+
+                                if (!File.Exists($"{_globalSettings.Scraper.ThumbnailLocation}{filename}") ||
+                                    string.IsNullOrWhiteSpace(download.Resolution))
+                                {
+                                    using (Image<Rgba32> imageData = SixLabors.ImageSharp.Image.Load(image))
+                                    {
+                                        if (string.IsNullOrWhiteSpace(download.Resolution))
+                                            download.Resolution = $"{imageData.Width}x{imageData.Height}";
+
+                                        if (imageData.Height < 720 || imageData.Width < 1024)
                                         {
-                                            System.IO.Directory.CreateDirectory(
-                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/");
-                                            thumbnailData.Save(
-                                                $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/{filename}");
+                                            Helpers.LogMessage(
+                                                $"Image is too Small: {imageData.Width}x{imageData.Height}");
+                                            _repos.ImageScrapeRepository.AddAsync(new ImageScrape
+                                            {
+                                                ImageId = download.ImageId,
+                                                Source = download.IndexSource,
+                                                Hash = download.Hash,
+                                                ScrapeId = ScrapeId,
+                                                Datestamp = DateTime.UtcNow
+                                            }, CancellationToken.None).GetAwaiter().GetResult();
+                                            continue;
+                                        }
+
+                                        if (!File.Exists(
+                                            $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/{filename}")
+                                        )
+                                        {
+                                            using (Image<Rgba32> thumbnailData = ResizeImageToThumbnail(imageData))
+                                            {
+                                                System.IO.Directory.CreateDirectory(
+                                                    $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/");
+                                                thumbnailData.Save(
+                                                    $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/{filename}");
+                                            }
                                         }
                                     }
                                 }
+
+
+                                Helpers.LogMessage($"{download.ImageId} :: Marked as Scraped!");
+
+                                //build new image
+                                var newImage = new Core.Database.Entities.Image
+                                {
+                                    ImageId = sanitizedId,
+                                    Class = download.Class,
+                                    IndexSource = download.IndexSource,
+                                    Who = download.Who,
+                                    Tripcode = download.TripCode,
+                                    ResolutionX = int.Parse(download.Resolution.Split('x').First()),
+                                    ResolutionY = int.Parse(download.Resolution.Split('x').Last()),
+                                    TagsString = download.Tag,
+                                    DateDownloaded = DateTime.UtcNow,
+                                    Reported = Enums.Reported.Unreported,
+                                    Hash = download.Hash,
+                                    FileExtension = download.ImageUrl.Split('.').Last(),
+                                    ServerId = _globalSettings.Scraper.ScrapeServer,
+                                    Size = image.Length / 1024m
+                                };
+
+                                //calculate ratio
+                                var r = Core.Helpers.Utilities.RatioCalculate(newImage.ResolutionX,
+                                    newImage.ResolutionY);
+
+
+                                try
+                                {
+                                    newImage.Ratio = $"{newImage.ResolutionX / r}:{newImage.ResolutionY / r}";
+                                }
+                                catch
+                                {
+                                    Helpers.LogMessage($"Ratio attempted to divide by zero?");
+                                }
+
+                                //add to imageRepo?
+                                _repos.ImageRepository.AddAsync(newImage, CancellationToken.None).GetAwaiter()
+                                    .GetResult();
+                                Helpers.LogMessage($"{download.ImageId} :: Added to Repo!");
                             }
-
-                            
-                            //Helpers.LogMessage($"{download.ImageId} :: Marked as Scraped!");
-
-                            //build new image
-                            var newImage = new Core.Database.Entities.Image
+                            catch (Exception ex)
                             {
-                                ImageId = sanitizedId,
-                                Class = download.Class,
-                                IndexSource = download.IndexSource,
-                                Who = download.Who,
-                                Tripcode = download.TripCode,
-                                ResolutionX = int.Parse(download.Resolution.Split('x').First()),
-                                ResolutionY = int.Parse(download.Resolution.Split('x').Last()),
-                                TagsString = download.Tag,
-                                DateDownloaded = DateTime.UtcNow,
-                                Reported = Enums.Reported.Unreported,
-                                Hash = download.Hash,
-                                FileExtension = download.ImageUrl.Split('.').Last(),
-                                ServerId = _globalSettings.Scraper.ScrapeServer,
-                                Size = image.Length / 1024m
-                            };
-
-                            //calculate ratio
-                            var r = Core.Helpers.Utilities.RatioCalculate(newImage.ResolutionX, newImage.ResolutionY);
-
-
-                            try
-                            {
-                                newImage.Ratio = $"{newImage.ResolutionX / r}:{newImage.ResolutionY / r}";
+                                Helpers.LogMessage($"Processing Image {download.ImageId} : Error {ex.Message}!");
                             }
-                            catch
-                            {
-                                Helpers.LogMessage($"Ratio attempted to divide by zero?");
-                            }
-
-                            //add to imageRepo?
-                            _repos.ImageRepository.AddAsync(newImage, CancellationToken.None).GetAwaiter().GetResult();
-                            //Helpers.LogMessage($"{download.ImageId} :: Added to Repo!");
-                        }
-                        catch (Exception ex)
-                        {
-                            Helpers.LogMessage($"Processing Image {download.ImageId} : Error {ex.Message}!");
                         }
                     }
+                }
+                catch(Exception ex)
+                {
+                    Helpers.LogMessage($"While Loop Failure : Error {ex.Message}!");
                 }
             }
         }
