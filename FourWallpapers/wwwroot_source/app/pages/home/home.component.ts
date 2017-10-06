@@ -54,23 +54,25 @@ export class HomeComponent implements OnInit {
 
     sources = [
         { 'value': '9999', 'label': 'Any', 'selected': 'selected' },
-        { 'value': '0', 'label': '/w/' },
-        { 'value': '1', 'label': '/v/' },
-        { 'value': '2', 'label': '/wg/' },
-        { 'value': '4', 'label': ' /hr/' },
-        { 'value': '100', 'label': '/wp/' },
-        { 'value': '200', 'label': '/r/wallpapers' },
-        { 'value': '201', 'label': '/r/wallpaper' },
-        { 'value': '202', 'label': '/r/NSFW_Wallpapers' },
-        { 'value': '203', 'label': '/r/multiwall' },
-        { 'value': '204', 'label': '/r/EarthPorn' },
-        { 'value': '206', 'label': '/r/spaceporn' },
-        { 'value': '207', 'label': '/r/HI_Res' },
-        { 'value': '208', 'label': '/r/WidescreenWallpaper' },
-        { 'value': '209', 'label': '/r/WQHD_Wallpaper' },
-        { 'value': '210', 'label': '/r/4to3Wallpapers' },
-        { 'value': '211', 'label': '/r/wallpaperdump' },
-        { 'value': '9998', 'label': 'imgur by way of reddit' }
+        { 'value': '0', 'label': '4chan /w/' },
+        { 'value': '1', 'label': '4chan /v/' },
+        { 'value': '2', 'label': '4chan /wg/' },
+        { 'value': '3', 'label': '4chan /hr/' },
+        { 'value': '100', 'label': '7chan /wp/' },
+        { 'value': '200', 'label': 'reddit /r/wallpapers' },
+        { 'value': '201', 'label': 'reddit /r/wallpaper' },
+        { 'value': '202', 'label': 'reddit /r/NSFW_Wallpapers' },
+        { 'value': '203', 'label': 'reddit /r/multiwall' },
+        { 'value': '204', 'label': 'reddit /r/EarthPorn' },
+        { 'value': '206', 'label': 'reddit /r/SpacePorn' },
+        { 'value': '207', 'label': 'reddit /r/Hi_Res' },
+        { 'value': '208', 'label': 'reddit /r/WidescreenWallpaper' },
+        { 'value': '209', 'label': 'reddit /r/WQHD_Wallpaper' },
+        { 'value': '210', 'label': 'reddit /r/4to3Wallpapers' },
+        { 'value': '211', 'label': 'reddit /r/wallpaperdump' },
+        { 'value': '300', 'label': '8chan /r/w' },
+        { 'value': '301', 'label': '8chan /r/wg' },
+        { 'value': '9998', 'label': 'Imgur (by way of reddit)' }
     ];
 
     classifications = [
