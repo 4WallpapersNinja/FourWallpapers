@@ -71,7 +71,8 @@ namespace FourWallpapers.Scrapper
                                       (!string.IsNullOrWhiteSpace(description) ? $",{description}" : "") +
                                       (!string.IsNullOrWhiteSpace(title) ? $",{title}" : ""),
                                 Who = images.Item.author ?? "Anonymous",
-                                IndexSource = Enums.Sources.Imgur
+                                IndexSource = Enums.Sources.Imgur,
+                                Source = page
                             };
 
                             if (classification != Enums.Classes.Any) imageDetail.Class = classification;

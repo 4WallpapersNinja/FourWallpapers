@@ -72,5 +72,7 @@ namespace FourWallpapers.Core.Database.Entities
         [DataMember]
         [NotMapped]
         public string Server => ServerId.ToString().PadLeft(3, '0');
+
+        public string SourceUrl { get;set; }
     }
 }

@@ -282,7 +282,8 @@ namespace FourWallpapers.Scrapper
                                     Hash = download.Hash,
                                     FileExtension = download.ImageUrl.Split('.').Last(),
                                     ServerId = _globalSettings.Scraper.ScrapeServer,
-                                    Size = image.Length / 1024m
+                                    Size = image.Length / 1024m,
+                                    SourceUrl = download.Source
                                 };
 
                                 //calculate ratio

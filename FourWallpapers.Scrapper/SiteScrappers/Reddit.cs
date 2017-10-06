@@ -143,7 +143,8 @@ namespace FourWallpapers.Scrapper.SiteScrappers
                                     //if domain = i.imgur.com this is a direct link
                                     var image = new ImageDetail
                                     {
-                                        IndexSource = source
+                                        IndexSource = source,
+                                        Source = dataUrl
                                     };
 
                                     if (classification != Enums.Classes.Any) image.Class = classification;

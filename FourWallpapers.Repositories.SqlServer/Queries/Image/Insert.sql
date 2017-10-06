@@ -16,7 +16,8 @@ INSERT INTO [dbo].[Image]
    ,[ServerId]
    ,[IsThumbnailAvailable]
    ,[IsLockedImage]
-   ,[Size])
+   ,[Size]
+   ,[SourceUrl])
 VALUES
    (@Id
    ,@ImageId
@@ -35,4 +36,5 @@ VALUES
    ,@ServerId
    ,@IsThumbnailAvailable
    ,@IsLockedImage
-   ,@Size)
+   ,@Size
+   ,@SourceUrl)

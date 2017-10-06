@@ -63,6 +63,8 @@ namespace FourWallpapers.Scrapper.SiteScrappers
                             //Helpers.LogMessage($"Processing Images");
                             var image = this.ProcessImageElement(post, source);
 
+                            image.Source = threadUrl;
+
                             if (string.IsNullOrWhiteSpace(image?.ImageId)) continue;
 
                             // - - - - check if images have been scrapped before

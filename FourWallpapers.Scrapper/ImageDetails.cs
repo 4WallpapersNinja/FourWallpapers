@@ -15,5 +15,6 @@ namespace FourWallpapers.Scrapper
         public bool AlreadyExists { get; set; }
         public string ImageId { get; set; }
         public string ImageExtension { get; set; }
+        public string Source { get; set; }
     }
 }

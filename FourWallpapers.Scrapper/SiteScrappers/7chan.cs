@@ -64,6 +64,7 @@ namespace FourWallpapers.Scrapper.SiteScrappers
 
                         if (string.IsNullOrWhiteSpace(image?.ImageId)) continue;
 
+                        image.Source = threadUrl;
                         // - - - - check if images have been scrapped before
                         if (ScrapeRepositories.ImageScrapeRepository
                             .ExistsAsync(image.ImageId, image.IndexSource, CancellationToken.None).GetAwaiter()
