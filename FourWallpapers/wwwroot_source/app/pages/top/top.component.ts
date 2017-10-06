@@ -37,8 +37,8 @@ export class TopComponent implements OnInit, OnDestroy {
         { 'link': '/top/Source/209', 'label': 'reddit /r/WQHD_Wallpaper' },
         { 'link': '/top/Source/210', 'label': 'reddit /r/4to3Wallpapers' },
         { 'link': '/top/Source/211', 'label': 'reddit /r/wallpaperdump' },
-        { 'link': '/top/Source/300', 'label': '8chan /r/w' },
-        { 'link': '/top/Source/301', 'label': '8chan /r/wg' },
+        { 'link': '/top/Source/300', 'label': '8chan /w/' },
+        { 'link': '/top/Source/301', 'label': '8chan /wg/' },
         { 'link': '/top/Source/9998', 'label': 'Imgur (by way of reddit)' }
     ];
     classificationOptions = [

@@ -70,8 +70,8 @@ export class HomeComponent implements OnInit {
         { 'value': '209', 'label': 'reddit /r/WQHD_Wallpaper' },
         { 'value': '210', 'label': 'reddit /r/4to3Wallpapers' },
         { 'value': '211', 'label': 'reddit /r/wallpaperdump' },
-        { 'value': '300', 'label': '8chan /r/w' },
-        { 'value': '301', 'label': '8chan /r/wg' },
+        { 'value': '300', 'label': '8chan /w/' },
+        { 'value': '301', 'label': '8chan /wg/' },
         { 'value': '9998', 'label': 'Imgur (by way of reddit)' }
     ];
 
