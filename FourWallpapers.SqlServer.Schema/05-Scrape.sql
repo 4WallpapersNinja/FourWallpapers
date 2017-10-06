@@ -7,3 +7,11 @@
     [ScrapeId] UNIQUEIDENTIFIER NULL, 
     [DateStamp] DATETIME NULL
 )
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Scrape_ImageId_Source] ON [dbo].[Scrape]
+(
+	[ImageId] ASC,
+	[Source] ASC
+)

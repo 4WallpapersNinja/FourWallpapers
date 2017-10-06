@@ -129,9 +129,11 @@ namespace FourWallpapers.Scrapper.SiteScrappers
                 var fileString = fileElement.First().TextContent ?? "";
 
                 var match = Regex.Match(fileString, @"(\d+)x(\d+)", RegexOptions.IgnoreCase);
-                if (int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value) < 300000) return false;
-                var temp = float.Parse(match.Groups[1].Value) / float.Parse(match.Groups[2].Value);
-                if (temp < .25 && temp > 4) return false;
+
+                if (float.Parse(match.Groups[1].Value) < 1024 || float.Parse(match.Groups[2].Value) < 720)
+                {
+                    return false;
+                }
                 image.Resolution = match.ToString();
 
                 return true;

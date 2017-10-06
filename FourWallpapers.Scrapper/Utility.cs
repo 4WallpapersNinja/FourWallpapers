@@ -17,6 +17,8 @@ namespace FourWallpapers.Scrapper
             {Enums.Sources.SlashHR, ""},
             {Enums.Sources.SevenChan, "/wp/"},
             {Enums.Sources.SlashV, ""},
+            {Enums.Sources.SlashW8Chan, "/w/"},
+            {Enums.Sources.SlashWG8Chan, "/wg/"},
             {Enums.Sources.Any, ""}
         };
     }

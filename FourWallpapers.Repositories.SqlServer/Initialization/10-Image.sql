@@ -24,3 +24,4 @@
 )
 GO
 CREATE UNIQUE INDEX [IX_ImageId] ON [dbo].[Image] ([ImageId])
+

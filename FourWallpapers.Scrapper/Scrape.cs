@@ -39,6 +39,7 @@ namespace FourWallpapers.Scrapper
 
             Processors.Add("4chan", new FourChan(_repos));
             Processors.Add("7chan", new SevenChan(_repos));
+            Processors.Add("8chan", new EightChan(_repos));
             Processors.Add("reddit", new Reddit(_repos));
         }
 
@@ -76,6 +77,11 @@ namespace FourWallpapers.Scrapper
                             break;
                         case Enums.Sources.RedditNsfwWallpapers:
                             runningTasks.Add(Task.Run(() => Processors["reddit"].Process(boardIdentifier, Enums.Classes.NotSafeForWork)));
+                            break;
+
+                        case Enums.Sources.SlashW8Chan:
+                        case Enums.Sources.SlashWG8Chan:
+                            runningTasks.Add(Task.Run(() => Processors["8chan"].Process(boardIdentifier)));
                             break;
                     }
                 }

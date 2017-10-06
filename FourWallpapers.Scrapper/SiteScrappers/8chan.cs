@@ -9,9 +9,9 @@ using FourWallpapers.Core;
 
 namespace FourWallpapers.Scrapper.SiteScrappers
 {
-    public class FourChan : BaseScraper, IScrapeProcessor
+    public class EightChan : BaseScraper, IScrapeProcessor
     {
-        public FourChan(ScrapeRepositories scrapeRepositories) : base(scrapeRepositories)
+        public EightChan(ScrapeRepositories scrapeRepositories) : base(scrapeRepositories)
         {
         }
 
@@ -19,22 +19,19 @@ namespace FourWallpapers.Scrapper.SiteScrappers
 
         public void Process(Enums.Sources source, Enums.Classes classification = Enums.Classes.Any)
         {
-            var url = "";
-            string board;
-
             CurrentBoard = source;
 
             try
             {
                 //Get the board URL.
-                board = Core.Constants.SourceUrls[source];
+                var board = Core.Constants.SourceUrls[source];
 
                 Helpers.LogMessage($"Starting Board: {board}");
 
                 //loop pages
                 for (var x = 1; x <= Settings.MaxPages; x++)
                 {
-                    if (x != 1) url = $"{x}";
+                    var url = x == 1 ? "index.html" : $"{x}";
 
                     //Helpers.LogMessage($"Getting Page Contents for {url}");
                     var pageContents = Helpers.GetPageContents(board + url);
@@ -56,23 +53,28 @@ namespace FourWallpapers.Scrapper.SiteScrappers
                         //Helpers.LogMessage($"Getting Thread Contents :: {threadUrl}");
                         var threadContents = Helpers.GetPageContents(board + threadUrl);
 
+                        //get post + all replys
+
                         //Helpers.LogMessage($"Processing Post");
-                        var post = GetPagePost(threadContents);
+                        var posts = GetPagePosts(threadContents);
 
-                        //Helpers.LogMessage($"Processing Images");
-                        var image = this.ProcessImageElement(post, source);
+                        foreach (var post in posts)
+                        {
+                            //Helpers.LogMessage($"Processing Images");
+                            var image = this.ProcessImageElement(post, source);
 
-                        if (string.IsNullOrWhiteSpace(image?.ImageId)) continue;
+                            if (string.IsNullOrWhiteSpace(image?.ImageId)) continue;
 
-                        // - - - - check if images have been scrapped before
-                        if (ScrapeRepositories.ImageScrapeRepository
-                            .ExistsAsync(image.ImageId, image.IndexSource, CancellationToken.None).GetAwaiter()
-                            .GetResult()) continue;
+                            // - - - - check if images have been scrapped before
+                            if (ScrapeRepositories.ImageScrapeRepository
+                                .ExistsAsync(image.ImageId, image.IndexSource, CancellationToken.None).GetAwaiter()
+                                .GetResult()) continue;
 
 
-                        Helpers.LogMessage($"Image not in Scrape Repo {image.ImageId}");
+                            Helpers.LogMessage($"Image not in Scrape Repo {image.ImageId}");
 
-                        ScrapeRepositories.Queue.Enqueue(image);
+                            ScrapeRepositories.Queue.Enqueue(image);
+                        }
                     }
                 }
             }
@@ -86,12 +88,11 @@ namespace FourWallpapers.Scrapper.SiteScrappers
         {
             try
             {
-                var imageUrlElement = element?.GetElementsByClassName("fileThumb");
+                var imageUrlElement = element.GetElementsByClassName("fileinfo");
 
-                if (imageUrlElement.Length == 0)
-                    image.ImageUrl = element.GetElementsByClassName("post_thumb").First().Children
-                        .First(child => child.HasAttribute("href")).GetAttribute("href");
-                else image.ImageUrl = imageUrlElement.First()?.GetAttribute("href") ?? "";
+                image.ImageUrl = imageUrlElement
+                    .SelectMany(e => e.GetElementsByTagName("a")).First(e => !e.HasAttribute("class")).GetAttribute("href");
+
 
 
                 if (string.IsNullOrWhiteSpace(image.ImageUrl)) return false;
@@ -125,7 +126,7 @@ namespace FourWallpapers.Scrapper.SiteScrappers
             try
             {
                 //get the file element
-                var fileElement = element.GetElementsByClassName("fileText");
+                var fileElement = element.GetElementsByClassName("unimportant");
 
 
                 //get its text
@@ -181,7 +182,9 @@ namespace FourWallpapers.Scrapper.SiteScrappers
 
                 //4chan threads
                 output.AddRange(document.GetElementsByClassName("thread")
-                    .SelectMany(thread => thread.GetElementsByClassName("replylink"))
+                    .SelectMany(thread => thread.GetElementsByClassName("post"))
+                    .SelectMany(post => post.GetElementsByClassName("intro"))
+                    .SelectMany(intro => intro.GetElementsByTagName("a").Where(i=> !i.HasAttribute("class")))
                     .Select(link => link.GetAttribute("href")).ToList());
 
                 return output;
@@ -192,17 +195,15 @@ namespace FourWallpapers.Scrapper.SiteScrappers
                 throw;
             }
         }
-
-        private IElement GetPagePost(string page)
+        
+        private List<IElement> GetPagePosts(string page)
         {
             try
             {
                 var parser = new HtmlParser();
                 var document = parser.Parse(page);
-                var element = document.GetElementsByClassName("postContainer");
-
-                if (element.Length == 0) element = document.GetElementsByClassName("post");
-                return element.First();
+                var elements = document.GetElementsByClassName("files").ToList();
+                return elements;
             }
             catch (Exception ex)
             {
