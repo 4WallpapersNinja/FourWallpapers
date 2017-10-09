@@ -19,22 +19,17 @@ namespace FourWallpapers.Scrapper.SiteScrappers
 
         public void Process(Enums.Sources source, Enums.Classes classification = Enums.Classes.Any)
         {
-            var url = "";
-            string board;
-
-            CurrentBoard = source;
-
             try
             {
                 //Get the board URL.
-                board = Core.Constants.SourceUrls[source];
+                var board = Core.Constants.SourceUrls[source];
 
                 Helpers.LogMessage($"Starting Board: {board}");
 
                 //loop pages
                 for (var x = 1; x <= Settings.MaxPages; x++)
                 {
-                    url = $"{x}.html";
+                    var url = $"{x}.html";
 
                     //Helpers.LogMessage($"Getting Page Contents for {url}");
                     var pageContents = Helpers.GetPageContents(board + url);

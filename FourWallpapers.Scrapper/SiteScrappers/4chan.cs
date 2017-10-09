@@ -14,20 +14,15 @@ namespace FourWallpapers.Scrapper.SiteScrappers
         public FourChan(ScrapeRepositories scrapeRepositories) : base(scrapeRepositories)
         {
         }
-
-        private Enums.Sources CurrentBoard { get; set; }
-
+        
         public void Process(Enums.Sources source, Enums.Classes classification = Enums.Classes.Any)
         {
             var url = "";
-            string board;
-
-            CurrentBoard = source;
 
             try
             {
                 //Get the board URL.
-                board = Core.Constants.SourceUrls[source];
+                var board = Core.Constants.SourceUrls[source];
 
                 Helpers.LogMessage($"Starting Board: {board}");
 
@@ -90,15 +85,12 @@ namespace FourWallpapers.Scrapper.SiteScrappers
             {
                 var imageUrlElement = element?.GetElementsByClassName("fileThumb");
 
-                if (imageUrlElement.Length == 0)
-                    image.ImageUrl = element.GetElementsByClassName("post_thumb").First().Children
+                if (imageUrlElement == null || imageUrlElement.Length == 0)
+                    image.ImageUrl = element?.GetElementsByClassName("post_thumb").First().Children
                         .First(child => child.HasAttribute("href")).GetAttribute("href");
                 else image.ImageUrl = imageUrlElement.First()?.GetAttribute("href") ?? "";
-
-
-                if (string.IsNullOrWhiteSpace(image.ImageUrl)) return false;
-
-                return true;
+                
+                return !string.IsNullOrWhiteSpace(image.ImageUrl);
             }
             catch
             {

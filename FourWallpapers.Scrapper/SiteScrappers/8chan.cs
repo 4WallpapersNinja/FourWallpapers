@@ -14,13 +14,9 @@ namespace FourWallpapers.Scrapper.SiteScrappers
         public EightChan(ScrapeRepositories scrapeRepositories) : base(scrapeRepositories)
         {
         }
-
-        private Enums.Sources CurrentBoard { get; set; }
-
+        
         public void Process(Enums.Sources source, Enums.Classes classification = Enums.Classes.Any)
         {
-            CurrentBoard = source;
-
             try
             {
                 //Get the board URL.

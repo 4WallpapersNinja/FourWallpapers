@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,10 +10,8 @@ using FourWallpapers.Core.Database.Entities;
 using FourWallpapers.Scrapper.SiteScrappers;
 using NUglify.Helpers;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using SixLabors.Shapes;
 
 namespace FourWallpapers.Scrapper
 {
@@ -215,7 +212,7 @@ namespace FourWallpapers.Scrapper
 
                                 var filename = $"{sanitizedId}.{download.ImageExtension}";
 
-                                System.IO.Directory.CreateDirectory(
+                                Directory.CreateDirectory(
                                     $"{_globalSettings.Scraper.ImageLocation}{filename.Substring(0, 2)}/");
 
                                 //if hash doesnt exists
@@ -254,7 +251,7 @@ namespace FourWallpapers.Scrapper
                                         {
                                             using (Image<Rgba32> thumbnailData = ResizeImageToThumbnail(imageData))
                                             {
-                                                System.IO.Directory.CreateDirectory(
+                                                Directory.CreateDirectory(
                                                     $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/");
                                                 thumbnailData.Save(
                                                     $"{_globalSettings.Scraper.ThumbnailLocation}{filename.Substring(0, 2)}/{filename}");
