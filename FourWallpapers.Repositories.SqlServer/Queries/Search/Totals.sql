@@ -31,6 +31,13 @@ AND (
 
 UNION ALL
 
+SELECT [Keyword] = 'Total Images from 8chan'
+	,[Count] = COUNT(*)
+FROM IMAGE
+WHERE Reported IN (0, 3)
+AND [IndexSource] BETWEEN 300 and 399
+UNION ALL
+
 SELECT [Keyword] = CASE [Class]
 		WHEN 0
 			THEN 'Total Images that are Unrated'
